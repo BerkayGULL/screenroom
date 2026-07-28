@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111827" />
+    <title>ScreenRoom — Arkadaşlarınla izle</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main id="lobby" class="lobby">
+      <section class="card hero">
+        <p class="eyebrow">WEBRTC · ÖZEL ODA · ÜCRETSİZ</p>
+        <h1>Screen<span>Room</span></h1>
+        <p class="lede">Arkadaşlarınla özel bir oda aç, ekranını paylaş ve birlikte izle.</p>
+        <form id="create-form" class="stack">
+          <label>Adın<input id="create-name" required maxlength="24" placeholder="Örn. Berkay" /></label>
+          <button class="primary" type="submit">Yeni oda oluştur</button>
+        </form>
+        <div class="or"><span>veya</span></div>
+        <form id="join-form" class="join-form">
+          <label>Oda kodu<input id="room-code" required maxlength="12" placeholder="ABC123" /></label>
+          <label>Adın<input id="join-name" required maxlength="24" placeholder="Örn. Ece" /></label>
+          <button type="submit">Odaya katıl</button>
+        </form>
+      </section>
+    </main>
+
+    <main id="room" class="room hidden">
+      <header class="topbar">
+        <a class="brand" href="/">Screen<span>Room</span></a>
+        <div class="room-code">ODA <strong id="room-id-label"></strong><button id="copy-link" title="Davet bağlantısını kopyala">Kopyala</button></div>
+        <div id="network-pill" class="pill">Bağlantı bekleniyor</div>
+      </header>
+      <section class="layout">
+        <div class="stage-panel">
+          <div id="empty-stage" class="empty-stage">
+            <div class="empty-icon">▣</div>
+            <h2>Yayın henüz başlamadı</h2>
+            <p id="empty-stage-text">Yayıncının ekran paylaşmasını bekliyorsun.</p>
+          </div>
+          <video id="screen-video" class="screen-video hidden" autoplay playsinline></video>
+          <div id="stream-meta" class="stream-meta hidden"><span class="live-dot"></span> CANLI <span id="quality-readout">—</span></div>
+        </div>
+        <aside class="sidebar">
+          <div class="side-heading"><h2>Katılımcılar</h2><span id="participant-count">0</span></div>
+          <ul id="participant-list" class="participant-list"></ul>
+          <div class="stats"><h3>Yayın kalitesi</h3><p><span>Çözünürlük</span><strong id="stat-resolution">—</strong></p><p><span>FPS</span><strong id="stat-fps">—</strong></p><p><span>Bitrate</span><strong id="stat-bitrate">—</strong></p></div>
+        </aside>
+      </section>
+      <footer class="controls">
+        <div id="host-controls" class="host-controls hidden">
+          <button id="start-share" class="primary">Ekranını paylaş</button>
+          <button id="stop-share" class="danger hidden">Yayını bitir</button>
+          <button id="settings-button">Yayın ayarları</button>
+        </div>
+        <p id="viewer-message" class="viewer-message">Odaya bağlanılıyor…</p>
+      </footer>
+    </main>
+
+    <dialog id="settings-dialog">
+      <form id="settings-form" method="dialog">
+        <div class="dialog-header"><h2>Yayın ayarları</h2><button class="icon-button" value="cancel">×</button></div>
+        <p class="muted">Seçimler hedef kalitedir; tarayıcı ve internet koşulları gerçek değeri etkileyebilir.</p>
+        <div class="settings-grid">
+          <label>Çözünürlük<select id="resolution"><option value="720">720p</option><option value="1080" selected>1080p</option></select></label>
+          <label>FPS<select id="fps"><option value="30">30 FPS</option><option value="60" selected>60 FPS</option></select></label>
+          <label>Kalite<select id="quality"><option value="low">Düşük</option><option value="balanced" selected>Dengeli</option><option value="high">Yüksek</option></select></label>
+          <label>İzleyici limiti<select id="viewer-limit"><option value="1">1 kişi</option><option value="2">2 kişi</option><option value="3" selected>3 kişi</option><option value="4">4 kişi</option></select></label>
+        </div>
+        <div class="estimate"><span>Önerilen upload</span><strong id="upload-estimate">—</strong><small id="estimate-detail">—</small></div>
+        <menu><button value="cancel">Vazgeç</button><button id="save-settings" class="primary" value="default">Kaydet</button></menu>
+      </form>
+    </dialog>
+    <div id="toast" class="toast hidden"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>
