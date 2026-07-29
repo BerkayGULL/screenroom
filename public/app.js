@@ -8,7 +8,7 @@ const state = {
 };
 
 const el = (id) => document.getElementById(id);
-const lobby = el("lobby"), roomPage = el("room"), screenVideo = el("screen-video"), emptyStage = el("empty-stage");
+const lobby = el("lobby"), roomPage = el("room"), screenVideo = el("screen-video"), emptyStage = el("empty-stage"), stagePanel = document.querySelector(".stage-panel");
 const hostControls = el("host-controls"), viewerMessage = el("viewer-message"), toast = el("toast");
 
 function makeRoomId() {
@@ -28,11 +28,12 @@ function updateRoleUi() {
 }
 function showStream(stream) {
   screenVideo.srcObject = stream;
-  screenVideo.classList.remove("hidden"); emptyStage.classList.add("hidden"); el("stream-meta").classList.remove("hidden");
+  screenVideo.classList.remove("hidden"); emptyStage.classList.add("hidden"); el("stream-meta").classList.remove("hidden"); el("fullscreen-button").classList.remove("hidden");
 }
 function hideStream() {
   screenVideo.srcObject = null;
-  screenVideo.classList.add("hidden"); emptyStage.classList.remove("hidden"); el("stream-meta").classList.add("hidden");
+  if (document.fullscreenElement) document.exitFullscreen();
+  screenVideo.classList.add("hidden"); emptyStage.classList.remove("hidden"); el("stream-meta").classList.add("hidden"); el("fullscreen-button").classList.add("hidden");
   ["resolution", "fps", "bitrate"].forEach((x) => el(`stat-${x}`).textContent = "—"); el("quality-readout").textContent = "—";
 }
 function renderParticipants() {
@@ -168,6 +169,17 @@ el("settings-button").addEventListener("click", () => { updateEstimate(); el("se
 ["resolution", "fps", "quality", "viewer-limit"].forEach((id) => el(id).addEventListener("change", updateEstimate));
 el("settings-form").addEventListener("submit", () => { updateEstimate(); showToast("Yayın ayarları kaydedildi."); });
 el("copy-link").addEventListener("click", async () => { await navigator.clipboard.writeText(location.href); showToast("Davet bağlantısı kopyalandı."); });
+el("fullscreen-button").addEventListener("click", async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await stagePanel.requestFullscreen();
+  } catch { showToast("Tam ekran modu açılamadı."); }
+});
+document.addEventListener("fullscreenchange", () => {
+  const active = Boolean(document.fullscreenElement);
+  el("fullscreen-button").innerHTML = active ? "⛶ <span>Tam ekrandan çık</span>" : "⛶ <span>Tam ekran</span>";
+  el("fullscreen-button").title = active ? "Tam ekrandan çık" : "Tam ekrana al";
+});
 socket.on("participants", (participants) => { state.participants = participants; renderParticipants(); });
 socket.on("peer-joined", async ({ id }) => { if (isHost() && state.stream) await offerTo(id); });
 socket.on("signal", handleSignal);

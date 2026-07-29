@@ -6,6 +6,11 @@
     <meta name="theme-color" content="#111827" />
     <title>ScreenRoom — Arkadaşlarınla izle</title>
     <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .fullscreen-button { position:absolute; right:1rem; bottom:1rem; background:#111827d9; border:1px solid #4b5563; padding:.55rem .7rem; font-size:.78rem; }
+      .stage-panel:fullscreen { width:100vw; height:100vh; border:0; border-radius:0; background:#000; }
+      .stage-panel:fullscreen .screen-video { max-height:100vh; }
+    </style>
   </head>
   <body>
     <main id="lobby" class="lobby">
@@ -41,6 +46,7 @@
           </div>
           <video id="screen-video" class="screen-video hidden" autoplay playsinline></video>
           <div id="stream-meta" class="stream-meta hidden"><span class="live-dot"></span> CANLI <span id="quality-readout">—</span></div>
+          <button id="fullscreen-button" class="fullscreen-button hidden" type="button" title="Tam ekrana al" aria-label="Tam ekrana al">⛶ <span>Tam ekran</span></button>
         </div>
         <aside class="sidebar">
           <div class="side-heading"><h2>Katılımcılar</h2><span id="participant-count">0</span></div>
