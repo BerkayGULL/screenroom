@@ -50,6 +50,12 @@ function bitrateForSettings() {
   const selector = { low: 0, balanced: .5, high: 1 }[state.settings.quality];
   return values[0] + (values[1] - values[0]) * selector;
 }
+function videoDimensions() {
+  // The menu values represent the vertical resolution: 720p = 1280×720,
+  // 1080p = 1920×1080 for a standard 16:9 screen share.
+  const height = state.settings.resolution;
+  return { width: Math.round(height * 16 / 9), height };
+}
 function updateEstimate() {
   state.settings = { resolution: Number(el("resolution").value), fps: Number(el("fps").value), quality: el("quality").value, viewerLimit: Number(el("viewer-limit").value) };
   const bitrate = bitrateForSettings(), required = bitrate * state.settings.viewerLimit * 1.2;
@@ -86,9 +92,10 @@ async function startShare() {
     const constraints = mediaConstraints();
     state.stream = await navigator.mediaDevices.getDisplayMedia(constraints);
     const videoTrack = state.stream.getVideoTracks()[0];
+    const dimensions = videoDimensions();
     await videoTrack.applyConstraints({
-      width: { ideal: state.settings.resolution },
-      height: { ideal: Math.round(state.settings.resolution * 9 / 16) },
+      width: { ideal: dimensions.width },
+      height: { ideal: dimensions.height },
       frameRate: { ideal: state.settings.fps }
     }).catch(() => {});
     videoTrack.addEventListener("ended", stopShare);
